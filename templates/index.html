@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat with Learning Companion</title>
+    <script>
+        function sendMessage(event) {
+            event.preventDefault();
+
+            var messageInput = document.getElementById("message");
+            var userMessage = messageInput.value;
+            messageInput.value = "";
+
+            var chatBox = document.getElementById("chat-box");
+            chatBox.innerHTML += "<p><strong>You:</strong> " + userMessage + "</p>";
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    var reply = JSON.parse(xhr.responseText).reply;
+                    chatBox.innerHTML += "<p><strong>Companion:</strong> " + reply + "</p>";
+                }
+            };
+
+xhr.send("message=" + encodeURIComponent(userMessage));
+        }
+    </script>
+</head>
+<body>
+    <h1>Chat with Learning Companion</h1>
+    <form onsubmit="sendMessage(event)">
+        <label for="message">Your Message:</label>
+        <input type="text" id="message" name="message" required>
+        <button type="submit">Send</button>
+    </form>
+    <div id="chat-box" style="margin-top: 20px;"></div>
+</body>
+</html>
